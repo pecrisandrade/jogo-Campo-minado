@@ -1,0 +1,96 @@
+<meta>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Campo minado</title>
+  <link rel="stylesheet"type="text/css" href="css/index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Turret+Road:wght@800&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=500, initial-scale=1">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+  <body oncontextmenu="return false;">              
+    <div class="container">
+      <div class="titulo"><h1>CAMPO MINADO</h1>
+      </div>
+      <div class="voltar">
+        <center>
+          <br><br>
+        </center>
+      </div>
+
+
+
+      <div id="jogo">
+        __tabela__
+      </div>
+      <br>
+      <div class="nivel">
+
+        <select name="id" id="nivel" onchange="nivel(this.value)">   <!-->select para escolha de nivel, retorna value</!-->
+
+          <option selected> Dificuldade</option>      <!-->selected indica qual sera o elemento a aparacer na tela</!-->
+          <option value=0> Fácil</option>
+          <option value=1> Médio</option>
+          <option value=2> Difícil</option>
+          <option value=3> Insano</option>
+          <option value=4> IFPE</option>
+        </select>
+
+      </div>
+      <br>
+      <a href="/" class='voltar'>
+        <h2 class="titulo voltar" >voltar</h2>
+      </body>
+    </div>
+    <script>
+      function nivel(value){                           //funcao para que o servidor possa acessar o value determinada anteriormente 
+        window.location.replace('/nivel/'+value)        //assim gerando a matriz desejada de acordo com o metodo no js
+      }
+
+      arraydebandeira = []                              //array que recebe os indices das bandeiras que o usuario colocou
+                                                    //todas as vezes que o usuario clica, ele solicita uma requisicao, reiciando as posicoes das bandeiras, pois elas estao no front, com essa matriz é possivel recolocar no response as bandeiras anteriormente clicadas
+      function bandeira(event, elemento){
+        var locbandeira = elemento.href.split('/')                      //a funcao split serve para quebrar os elementos no ponto descrito, como o
+        var linhabandeira = locbandeira[locbandeira.length - 2]         //os links sao escritos de forma similar, sendo assim possivel a quebra e
+        var colunabandeira = locbandeira[locbandeira.length - 1]        //localizacao dos seus indices
+        
+
+        if(event.button == 2)             //quando clicar no botao direito do mouse
+        {
+          if(elemento.classList.contains('bandeira'))         //se houver bandeira selecionada no jogo
+          {  
+            var posicao = arraydebandeira.indexOf(linhabandeira+'-'+colunabandeira)     //adiciona nova bandeira com as variaveis criadas acima
+            arraydebandeira.splice(posicao, 1)          //adiciona a um array unidimensional
+
+            elemento.classList.remove('bandeira')       //para remover de bandeira
+          }
+          else
+          {
+            elemento.classList.add('bandeira')      //caso não haja bandeira, ele adiociona a primera     
+            arraydebandeira.push(linhabandeira+'-'+colunabandeira);
+          }
+        }
+
+        if(event.button == 0 && elemento.classList.contains('bandeira'))    //clicando no botao direito caso haja bandeira
+        {
+          // console.log(event.button)
+          elemento.onclick = function(){        //desativa a funcao do botao esquerdo caso haja bandeira em seu indice
+            return false;
+          }
+
+        }
+        else if(event.button == 0 && !elemento.classList.contains('bandeira'))    //caso clique no botao direito e nao haja bandeira
+        {
+          arraydebandeira = arraydebandeira.length == 0 ? 'vazio' : arraydebandeira   //condicao se há ou nao bandeiras marcadas
+          elemento.href = elemento.href+'/'+arraydebandeira         //concatena arraydebandeira com elemento href com / para no splice ele quebrar
+          elemento.onclick = function(){                            //da mesma forma e não ter erro na leitura dos indices
+            return true;
+          }
+        }
+      }
+
+    </script>
+    </html>
